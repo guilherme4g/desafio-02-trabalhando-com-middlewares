@@ -23,7 +23,10 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  if (!user.pro && user.todos.length >= 10) return response.status(403).json({ error: 'you reached the limit' });
+
   next();
 }
 
@@ -37,14 +40,14 @@ function checksTodoExists(request, response, next) {
     return response.status(404).json({ error: 'user not exists' });
   }
 
-  const todo = users.todos.find(todo => { todo.id === id });
+  const todo = user.todos.find(todo => todo.id === id );
+
+  if(!validate(id)) {
+    return response.status(400).json({ error: 'id todo is invalid' });
+  }
 
   if (!todo) {
     return response.status(404).json({ error: 'todo not exists' });
-  }
-
-  if(!validate(todo.id)) {
-    return response.status(400).json({ error: 'id todo is invalid' });
   }
   
   request.user = user;
